@@ -10,6 +10,10 @@ COPY package*.json .
 # Install the Node.js dependencies
 RUN npm install
 
+# Add a non-root user and switch to it
+RUN adduser -D appuser
+USER appuser
+
 # Copy the entire frontend code into the container
 COPY . .
 
