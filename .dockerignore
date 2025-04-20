@@ -1,0 +1,67 @@
+# 1. Version control
+.git/
+.gitignore
+.svn/
+.hg/
+
+# 2. IDE/editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 3. Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+
+# 4. Node.js artifacts
+node_modules/
+npm-debug.log
+yarn-debug.log
+
+# 5. Build outputs
+build/
+dist/
+out/
+
+# 6. Test files and directories
+test/
+tests/
+*.test
+
+# 7. Debug and log files
+debug/
+*.log
+
+# 8. Environment and secrets
+.env*
+*.env
+*.pem
+*.key
+*.crt
+config.local.*
+*.local.yml
+
+# 9. Project-specific patterns
+Dockerfile*
+docker-compose*
+docs/
+*.md
+README*
+
+# 10. Temporary and local files
+tmp/
+temp/
+*.tmp
+.local/
+local/
+
+# 11. Miscellaneous
+*.bak
+*.orig
+
+# 12. Devcontainer config
+.devcontainer/

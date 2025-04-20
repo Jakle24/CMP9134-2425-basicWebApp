@@ -1,82 +1,49 @@
-This is a simple full-stack web application composed of a backend and a frontend. It utilizes Flask for the backend API and ReactJS for the frontend interface.
+# Running the Application with Docker
 
-# Instructions to launch application on INB labs' PCs
+This project is fully containerized and can be run using Docker Compose. The setup uses specific versions and configurations as defined in the provided Dockerfiles and compose file.
 
-## 1. Clone the repository
+## Project-specific Docker Details
 
-Open a Terminal, the launch the following commands:
+- **Backend**
+  - Python 3.10 (slim image)
+  - All Python dependencies are installed in a virtual environment inside the container
+  - Exposes port **5000** internally (not mapped to host by default)
 
-```Bash
-git clone https://github.com/francescodelduchetto/CMP9134-2425-basicWebApp
-```
+- **Frontend**
+  - Node.js version **22.13.1** (slim image)
+  - Uses Vite for building and serving the React app
+  - Exposes port **4173** inside the container, mapped to **localhost:5173** on your machine
 
-## 2. Open Visual Studio Code Container
+- **Networking**
+  - Both services are connected via a custom Docker network (`appnet`)
 
-1. Make sure that Docker is running on your computer. 
-2. Open VS Code.
-3. Click on the blue icon in the **bottom left corner of the visual studio window** 
-     <img width="59" alt="image" src="https://github.com/francescodelduchetto/RBT1001/assets/7307164/adc84af7-daa9-4470-a550-06e017a5cf2c">
+- **No required environment variables** are set by default, but you can add a `.env` file in each service directory if needed (see commented `env_file` lines in `docker-compose.override.yml`).
 
-4. Select "Reopen in Container..."
-5. Locate the folder `CMP9134-2425-basicWebApp`, select it and click Open
-6. Wait until the setup is complete.
+## How to Build and Run with Docker Compose
 
-**Your application should now be running and accessible at http://localhost:5173/**
+1. **Ensure Docker is running** on your system.
+2. In the project root directory, run:
 
-# ❗If you plan to work with this template on your personal computer, you need the following installation steps as prerequisite
+   ```bash
+   docker compose up --build
+   ```
+   This will build both the backend and frontend images and start the containers.
 
-### Setup your environment
+3. **Access the application:**
+   - Frontend: [http://localhost:5173/](http://localhost:5173/)
+   - Backend API: Accessible from within the Docker network at port 5000 (not exposed to host by default)
 
-1. Make sure you have Docker installed: https://docs.docker.com/engine/install/
-2. Make sure you have VSCode installed: https://code.visualstudio.com/download
-3. Make sure you have git installed: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
-4. Make sure you have the `Docker` and the `Dev Containers` extension in VSCode installed and working: https://code.visualstudio.com/docs/containers/overview and https://code.visualstudio.com/docs/devcontainers/containers
-    * ensure docker is working, i.e. try `docker run --rm hello-world` and check it succeeds for your user
+4. **Stopping the application:**
+   Press `Ctrl+C` in the terminal, then run:
+   ```bash
+   docker compose down
+   ```
 
+## Notes
+- If you need to customize environment variables, create a `.env` file in either the `backend` or `frontend` directory and uncomment the `env_file` line in `docker-compose.override.yml`.
+- The backend and frontend containers run as non-root users for improved security.
+- The frontend is served using Vite's preview server in production mode.
 
-# [OLD] Manual Installation ⬇️
-## 3. Install requirements
-:exclamation: The following commands needs to be launched from terminals inside VSCode (click Terminal > New Terminal).
+---
 
-1. Install Python package requirements:
-     ```Bash
-     pip install -r requirements.txt
-     ```
-2. Install NodeJs and its requirements:
-     ```Bash
-     curl -sL https://deb.nodesource.com/setup_22.x -o nodesource_setup.sh
-     ```
-     ```Bash
-     sudo bash nodesource_setup.sh && sudo apt install -y nodejs
-     ```
-     ```Bash
-     cd frontend
-     ```
-     ```Bash
-     npm install
-     ```
-
-## 4. Launch backend
-Open a new VSCode Terminal and launch the following commands.
-
-```Bash
-cd ../backend
-```
-```Bash
-python main.py
-```
-
-## 5. Launch frontend
-On a different terminal, launch:
-
-```Bash
-cd frontend
-```
-```Bash
-npm run dev
-```
-This will start the development server for the frontend, usually accessible at http://localhost:5173/.
-
-## CREDITS:
-Adapted from: [https://github.com/Pakheria/Basic-Web-Application](https://github.com/Pakheria/Basic-Web-Application)
-
+*The above instructions are specific to this project's Docker setup. For manual installation or development in VSCode Dev Containers, see the sections above.*
