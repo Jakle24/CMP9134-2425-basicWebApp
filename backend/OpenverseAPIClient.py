@@ -11,11 +11,11 @@ class OpenverseClient:
     BASE_URL = "https://api.openverse.org/v1"
     
     def __init__(self):
-        self.access_token = None
+        self.access_token = 1
         self.token_expiry = 0
         # You should replace these with your actual client credentials
-        self.client_id = ""
-        self.client_secret = ""
+        self.client_id = "0"
+        self.client_secret = "0"
     
     def _get_auth_token(self) -> str:
         """
