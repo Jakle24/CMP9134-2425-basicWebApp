@@ -11,7 +11,7 @@ WORKDIR /app
 # Builder stage: install dependencies in a venv
 FROM base AS builder
 
-# Install build dependencies (if any needed for pip install, e.g. gcc, libpq-dev, etc.)
+# Install build dependencies (if needed)
 RUN apt-get update --no-install-recommends -y && \
     apt-get install --no-install-recommends -y gcc && \
     rm -rf /var/lib/apt/lists/*
@@ -20,16 +20,14 @@ RUN apt-get update --no-install-recommends -y && \
 RUN python -m venv /app/.venv
 
 # Copy requirements and install dependencies
-COPY --link requirements.txt ./
-
+COPY requirements.txt ./
 ENV PIP_CACHE_DIR=/root/.cache/pip
-
 RUN --mount=type=cache,target=$PIP_CACHE_DIR \
     /app/.venv/bin/pip install --upgrade pip && \
     /app/.venv/bin/pip install -r requirements.txt
 
 # Copy application code
-COPY --link . .
+COPY . .
 
 # Final stage: minimal runtime image
 FROM base AS final
