@@ -1,43 +1,18 @@
-# syntax=docker/dockerfile:1
-ARG NODE_VERSION=22.13.1
+# Start with a base Node.js image
+FROM node:18-alpine
 
-# --- Build Stage ---
-FROM node:${NODE_VERSION}-slim AS builder
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /workspace
 
-# Install dependencies (npm ci is deterministic)
-COPY --link package*.json ./
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+# Copy the package.json and package-lock.json files into the container
+COPY package*.json .
 
-# Copy source code
-COPY --link . .
+# Install the Node.js dependencies
+RUN npm install
 
-# Build the app (Vite will output to dist/ by default)
-RUN npm run build
+# Copy the entire frontend code into the container
+COPY . .
 
-# Remove dev dependencies to reduce image size
-RUN npm prune --production
-
-# --- Production Stage ---
-FROM node:${NODE_VERSION}-slim AS final
-WORKDIR /app
-
-# Create non-root user and group
-RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
-
-# Copy built app and production dependencies
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/index.html ./
-
-ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=4096"
-USER appuser
-
-# Expose Vite preview server port
-EXPOSE 4173
-
-# Start the Vite preview server
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"]
+# Define the command to start the frontend development server
+# Using host 0.0.0.0 allows connections from outside the container
+CMD ["npm", "run", "dev"]
