@@ -14,8 +14,8 @@ class OpenverseClient:
         self.access_token = None
         self.token_expiry = 0
         # You should replace these with your actual client credentials
-        self.client_id = ""
-        self.client_secret = ""
+        self.client_id = "0"
+        self.client_secret = "0"
     
     def _get_auth_token(self) -> str:
         """
