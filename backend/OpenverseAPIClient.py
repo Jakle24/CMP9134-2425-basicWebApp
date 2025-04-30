@@ -11,13 +11,14 @@ class OpenverseClient:
     BASE_URL = "https://api.openverse.org/v1"
 
     def __init__(self):
-        self.access_token = None
-        self.token_expiry = 0
+        self.access_token = "LkcinYrVG1DdBJhVlyJaek7y6Uq6ta"
+        self.token_expiry = 43200
         # You should replace these with your actual client credentials
-        self.client_id = ""
-        self.client_secret = ""
+        self.client_id = "RO5APr9fRlpKX3LlQrYogAOfrZYDybyt9aKugQTp"
+        self.client_secret = "gnI3sisMxwz5iTxWf32Xddp54VAlKe7yLkMAND1IYgM7bEyzx2xQFJcBXOgbCAJqbTz8aXxbJOvtL4PBPPwCKnCAoMi6B4bXyIrI7rcfuQNiTLjmfPehcNYh0lyLKbUa"
+        #name: BasicWebApp
 
-    def _get_auth_token(self) -> str:
+    def _get_auth_token(self) -> str: 
         """
         Get an OAuth access token from the OpenVerse API.
         Caches the token until it expires.
