@@ -1,8 +1,21 @@
-from flask import request, jsonify
+from flask import request, jsonify, Flask
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from config import app, db
-from models import Contact
+from models import Contact, User
 
 from OpenverseAPIClient import OpenverseClient
+
+app.config['SECRET_KEY'] = 'your-secret-key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
+db.init_app(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 @app.route("/contacts", methods=["GET"])
@@ -62,6 +75,34 @@ def delete_contact(user_id):
 
     return jsonify({"message": "User deleted"}), 200
 
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    username = data['username']
+    password = data['password']
+    if User.query.filter_by(username=username).first():
+        return jsonify({'message': 'Username already exists'}), 400
+    pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    user = User(username=username, password_hash=pw_hash)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({'message': 'User registered successfully'})
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    user = User.query.filter_by(username=data['username']).first()
+    if user and bcrypt.check_password_hash(user.password_hash, data['password']):
+        login_user(user)
+        return jsonify({'message': 'Logged in successfully'})
+    return jsonify({'message': 'Invalid credentials'}), 401
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return jsonify({'message': 'Logged out'})
+
 ov_client = OpenverseClient()
 
 @app.route("/search_images", methods=["GET"])
@@ -101,6 +142,21 @@ def search_images():
     
     return jsonify(results)
 
+
+@app.route('/recent_searches', methods=['GET', 'POST', 'DELETE'])
+@login_required
+def recent_searches():
+    if request.method == 'GET':
+        return jsonify(current_user.recent_searches)
+    elif request.method == 'POST':
+        search = request.json.get('search')
+        current_user.recent_searches.append(search)
+        db.session.commit()
+        return jsonify({'message': 'Search saved'})
+    elif request.method == 'DELETE':
+        current_user.recent_searches = []
+        db.session.commit()
+        return jsonify({'message': 'Recent searches cleared'})
 
 
 if __name__ == "__main__":

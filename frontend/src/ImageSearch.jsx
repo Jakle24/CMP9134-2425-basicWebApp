@@ -7,10 +7,11 @@ const ImageSearch = () => {
 
     const handleSearch = async () => {
         try {
-            // Changed from query to q to match the backend expectation
-            const response = await fetch(`/search_images?q=${query}`);
+            const apiUrl = `/search_images?q=${query}`;
+            const response = await fetch(apiUrl);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
             }
             const data = await response.json();
             
@@ -24,8 +25,8 @@ const ImageSearch = () => {
                 setImages([]);
             }
             setError(null);
-        } catch (e) {
-            console.error("Error fetching images:", e);
+        } catch (error) {
+            console.error("Error fetching images:", error);
             setError("Error fetching images. Please try again.");
             setImages([]);  // Set as empty array on error
         }
