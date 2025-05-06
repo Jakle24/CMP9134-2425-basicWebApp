@@ -119,24 +119,29 @@ def search_images():
     if tags:
         tags = tags.split(",")
 
-    # Get results from OpenverseClient
-    results = ov_client.search_images(
-        query=query,
-        page=page,
-        page_size=page_size,
-        license_type=license_type,
-        creator=creator,
-        tags=tags
-    )
+    try:
+        # Get results from OpenverseClient
+        results = ov_client.search_images(
+            query=query,
+            page=page,
+            page_size=page_size,
+            license_type=license_type,
+            creator=creator,
+            tags=tags
+        )
 
-    # Ensure results is a list
-    if isinstance(results, dict) and "results" in results:
-        images = results["results"]
-    else:
-        images = results if isinstance(results, list) else []
+        # Ensure results is a list
+        if isinstance(results, dict) and "results" in results:
+            images = results["results"]
+        else:
+            images = results if isinstance(results, list) else []
 
-    # Always return { "results": [...] }
-    return jsonify({"results": images})
+        # Always return { "results": [...] }
+        return jsonify({"results": images})
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error in /search_images: {e}")
+        return jsonify({"error": "Failed to fetch images", "details": str(e)}), 500
 
 
 @app.route('/recent_searches', methods=['GET', 'POST', 'DELETE'])
