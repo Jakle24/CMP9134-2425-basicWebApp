@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 const RecentSearches = ({ onSearch }) => {
   const [recentSearches, setRecentSearches] = useState([]);
 
-  // Fetch from backend on mount
   useEffect(() => {
     fetch('/recent_searches', { credentials: 'include' })
       .then(res => res.json())
@@ -35,7 +34,6 @@ const RecentSearches = ({ onSearch }) => {
           </button>
         )}
       </div>
-
       {recentSearches.length === 0 ? (
         <p className="text-gray-500 text-sm">No recent searches.</p>
       ) : (

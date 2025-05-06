@@ -43,20 +43,31 @@ function App() {
 
   return (
     <>
-      <div className="tab-buttons">
-        <button 
-          className={`tab-button ${activeTab === 'contacts' ? 'active' : ''}`}
-          onClick={() => setActiveTab('contacts')}
-        >
-          Contacts
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'images' ? 'active' : ''}`}
-          onClick={() => setActiveTab('images')}
-        >
-          Image Search
-        </button>
-      </div>
+      {/* Navigation Bar */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="index.html">Image Searcher</a>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <button className={`nav-link btn btn-link ${activeTab === 'contacts' ? 'active' : ''}`} onClick={() => setActiveTab('contacts')}>Home</button>
+              </li>
+              <li className="nav-item">
+                <button className={`nav-link btn btn-link ${activeTab === 'images' ? 'active' : ''}`} onClick={() => setActiveTab('images')}>Image Searcher</button>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="account-creator.html">Create Account</a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="account-page.html">Account Page</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
 
       {activeTab === 'contacts' && (
         <div className="contacts-tab">
