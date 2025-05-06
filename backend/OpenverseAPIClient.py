@@ -11,18 +11,16 @@ class OpenverseClient:
     BASE_URL = "https://api.openverse.org/v1"
 
     def __init__(self):
-        self.access_token = "LkcinYrVG1DdBJhVlyJaek7y6Uq6ta"
-        self.token_expiry = 43200
-        # You should replace these with your actual client credentials
+        self.access_token = None
+        self.token_expiry = 0
         self.client_id = "RO5APr9fRlpKX3LlQrYogAOfrZYDybyt9aKugQTp"
         self.client_secret = "gnI3sisMxwz5iTxWf32Xddp54VAlKe7yLkMAND1IYgM7bEyzx2xQFJcBXOgbCAJqbTz8aXxbJOvtL4PBPPwCKnCAoMi6B4bXyIrI7rcfuQNiTLjmfPehcNYh0lyLKbUa"
-        #name: BasicWebApp
 
-    def _get_auth_token(self) -> str: 
+    def _get_auth_token(self) -> str:
         """
         Get an OAuth access token from the OpenVerse API.
         Caches the token until it expires.
-        
+
         Returns:
             str: The access token
         """
@@ -43,9 +41,8 @@ class OpenverseClient:
             "grant_type": "client_credentials"
         }
         try:
-            # Send data as form data, not JSON
             response = requests.post(auth_url, headers=headers, data=data)
-            response.raise_for_status()
+            response.raise_for_status()  # Check for HTTP errors
 
             token_data = response.json()
             self.access_token = token_data.get("access_token")
@@ -56,19 +53,21 @@ class OpenverseClient:
             return self.access_token
 
         except requests.exceptions.RequestException as e:
-            print(f"Error getting auth token: {e} {response.text}")
+            print(f"Error getting auth token: {e}")
+            if response:
+                print(f"Response: {response.text}")
             return None
 
-    def search_images(self, 
-                    query: str, 
-                    page: int = 1, 
-                    page_size: int = 20, 
-                    license_type: Optional[str] = None,
-                    creator: Optional[str] = None,
-                    tags: Optional[List[str]] = None) -> Dict[str, Any]:
+    def search_images(self,
+                      query: str,
+                      page: int = 1,
+                      page_size: int = 20,
+                      license_type: Optional[str] = None,
+                      creator: Optional[str] = None,
+                      tags: Optional[List[str]] = None) -> Dict[str, Any]:
         """
         Search for images on OpenVerse
-        
+
         Args:
             query (str): The search query
             page (int, optional): Page number for pagination. Defaults to 1.
@@ -76,7 +75,7 @@ class OpenverseClient:
             license_type (str, optional): Filter by license type.
             creator (str, optional): Filter by creator.
             tags (List[str], optional): List of tags to filter by.
-            
+
         Returns:
             Dict[str, Any]: The search results
         """
@@ -105,12 +104,12 @@ class OpenverseClient:
 
         try:
             response = requests.get(search_url, headers=headers, params=params)
-            response.raise_for_status()
+            response.raise_for_status()  # Check for HTTP errors
             return response.json()
 
         except requests.exceptions.RequestException as e:
-            return {"error": f"Error searching images: {str(e)}"}
+            return {"error": f"Error searching images: {str(e)}", "details": response.text if response else "No response"}
 
 # Usage example:
-# client = OpenVerseClient()
+# client = OpenverseClient()
 # results = client.search_images("nature", page=1, page_size=10)

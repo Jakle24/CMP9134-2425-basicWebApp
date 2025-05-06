@@ -22,26 +22,23 @@ const RecentSearches = ({ onSearch }) => {
   };
 
   return (
-    <div className="p-4 bg-gray-100 rounded-xl shadow-md mt-4">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold">Recent Searches</h2>
+    <div className="mt-4 p-3 bg-light rounded shadow">
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <h5 className="mb-0">Recent Searches</h5>
         {recentSearches.length > 0 && (
-          <button
-            className="text-sm text-red-500 hover:underline"
-            onClick={handleClear}
-          >
+          <button className="btn btn-sm btn-outline-danger" onClick={handleClear}>
             Clear All
           </button>
         )}
       </div>
       {recentSearches.length === 0 ? (
-        <p className="text-gray-500 text-sm">No recent searches.</p>
+        <p className="text-muted mb-0">No recent searches.</p>
       ) : (
-        <ul className="space-y-1">
+        <ul className="list-unstyled mb-0">
           {recentSearches.map((item) => (
             <li key={item.id}>
               <button
-                className="text-blue-600 hover:underline text-sm"
+                className="btn btn-link btn-sm p-0"
                 onClick={() => handleClick(item.query)}
               >
                 {item.query}
