@@ -18,11 +18,16 @@ def create_contact():
     last_name = request.json.get("lastName")
     email = request.json.get("email")
 
+    # Validate input
     if not first_name or not last_name or not email:
         return (
-            jsonify({"message": "You must include the first name, last name and email"}),
+            jsonify({"message": "You must include the first name, last name, and email"}),
             400,
         )
+
+    # Check for duplicate email
+    if Contact.query.filter_by(email=email).first():
+        return jsonify({"message": "Email already exists"}), 400
 
     new_contact = Contact(first_name=first_name, last_name=last_name, email=email)
     try:
@@ -64,41 +69,36 @@ def delete_contact(user_id):
 
 ov_client = OpenverseClient()
 
+from models import ImageSearch
+
 @app.route("/search_images", methods=["GET"])
 def search_images():
-    """
-    Endpoint to search for images using the OpenVerse API
-    Query parameters:
-    - q: Search query (required)
-    - page: Page number (default: 1)
-    - page_size: Results per page (default: 20)
-    - license: Filter by license type
-    - creator: Filter by creator
-    - tags: Comma-separated list of tags
-    """
     query = request.args.get("q")
     if not query:
         return jsonify({"error": "Search query is required"}), 400
-    
+
+    # Save the search query to the database
+    new_search = ImageSearch(query=query)
+    db.session.add(new_search)
+    db.session.commit()
+
     page = request.args.get("page", 1, type=int)
     page_size = request.args.get("page_size", 20, type=int)
     license_type = request.args.get("license")
     creator = request.args.get("creator")
-    
-    # Handle tags as a comma-separated list
     tags = request.args.get("tags")
     if tags:
         tags = tags.split(",")
-    
+
     results = ov_client.search_images(
         query=query,
         page=page,
         page_size=page_size,
         license_type=license_type,
         creator=creator,
-        tags=tags
+        tags=tags,
     )
-    
+
     return jsonify(results)
 
 
