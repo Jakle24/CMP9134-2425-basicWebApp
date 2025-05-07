@@ -7,7 +7,7 @@ const ContactList = ({ contacts, updateContact, updateCallback }) => {
         method: "DELETE",
       };
       const response = await fetch(
-        `http://127.0.0.1:5000/delete_contact/${id}`,
+        `http://localhost:5000/delete_contact/${id}`,
         options
       );
 
